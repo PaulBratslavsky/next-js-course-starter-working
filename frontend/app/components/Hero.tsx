@@ -24,13 +24,15 @@ export default function Hero({ data }: Readonly<HeroProps>) {
   return (
     <div className="hero my-12 rounded-lg">
       <div className="hero-content p-0 flex-col lg:flex-row">
-        <Image
-          src={imageUrl ?? ""}
-          width={500}
-          height={500}
-          alt={image.alternativeText}
-          className="max-w-sm rounded-lg shadow-2xl"
-        />
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            width={500}
+            height={500}
+            alt={image.alternativeText}
+            className="max-w-sm rounded-lg shadow-2xl"
+          />
+        )}
         <div className="mx-8">
           <h1 className="text-5xl font-bold">{heading}</h1>
           <p className="py-6">{text}</p>

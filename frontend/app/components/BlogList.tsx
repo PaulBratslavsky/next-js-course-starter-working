@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getStrapiMedia, formatDate } from "../utils";
 
 interface ImageProps {
   url: string;
@@ -39,49 +40,52 @@ export default function BlogList({ data }: BlogListProps) {
 }
 
 function BlogListCard({ post }: { readonly post: PostProps }) {
+  const { title, description, createdAt, image, category, author } = post;
+  const imageUrl = getStrapiMedia(image.url);
+  const authorImageUrl = getStrapiMedia(author.image.url);
   return (
-    <Link href={post.slug}>
+    <Link href={"/blog/" + post.slug}>
       <article className="shadow-lg rounded-lg">
         <div className="relative w-full">
-          <Image
-            src={post.image.url}
-            alt={post.image.alternateText}
-            height={400}
-            width={400}
-            className="aspect-[16/9] w-full rounded-t-lg bg-base-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
-          />
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              alt={image.alternateText}
+              height={400}
+              width={400}
+              className="aspect-[16/9] w-full rounded-t-lg bg-base-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+            />
+          )}
         </div>
         <div className="p-6">
           <div className="flex items-center justify-between gap-x-4 text-xs">
-            <time dateTime={post.createdAt}>{post.date}</time>
-            <div className="badge badge-ghost">{post.category.title}</div>
+            <time dateTime={createdAt}>{formatDate(createdAt)}</time>
+            <div className="badge badge-ghost">{category.title}</div>
           </div>
           <div className="group relative">
             <h3 className="mt-3 text-lg font-semibold leading-6 text-primary">
               <span className="absolute inset-0" />
-              {post.title}
+              {title}
             </h3>
-            <p className="mt-5 line-clamp-3 text-sm leading-6">
-              {post.description}
-            </p>
+            <p className="mt-5 line-clamp-3 text-sm leading-6">{description}</p>
           </div>
           <div className="relative mt-8 flex items-center gap-x-4">
             <div className="avatar">
               <div className="w-20 rounded-full">
-                <Image
-                  src={post.author.image.url}
-                  alt={post.author.image.alternateText}
+                { authorImageUrl && <Image
+                  src={authorImageUrl}
+                  alt={image.alternateText}
                   height={400}
                   width={400}
-                />
+                /> }
               </div>
             </div>
             <div className="text-sm leading-6">
               <p className="font-semibold">
                 <span className="absolute inset-0" />
-                {post.author.name}
+                {author.name}
               </p>
-              <p>{post.author.role}</p>
+              <p>{author.role}</p>
             </div>
           </div>
         </div>
