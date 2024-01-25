@@ -46,3 +46,14 @@ export function getHomePageData() {
   });
   return fetchData(`${baseUrl}/api/home-page?${query}`);
 }
+
+export function getPostsData() {
+  const query = qs.stringify({
+    populate: {
+      category: { populate: true },
+      image: { fields: ["url", "alternativeText"] },
+      author: { populate: { image: { fields: ["url", "alternativeText"] } } },
+    },
+  });
+  return fetchData(`${baseUrl}/api/posts?${query}`);
+}
