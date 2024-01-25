@@ -7,7 +7,7 @@ interface NavItemProps {
 
 interface NavItemsProps {
   data: {
-    logoText: string;
+    logoText: NavItemProps;
     navItems: NavItemProps[];
     cta: NavItemProps;
   };
@@ -15,11 +15,12 @@ interface NavItemsProps {
 
 export default function TopNav({ data }: Readonly<NavItemsProps>) {
   const { logoText, navItems, cta } = data;
+
   return (
     <div className="navbar bg-base-100 shadow-lg rounded-lg">
       <div className="navbar-start">
-        <Link href="/" className="btn btn-ghost text-xl">
-          {logoText}
+        <Link href={logoText.href} className="btn btn-ghost text-xl">
+          {logoText.text}
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
