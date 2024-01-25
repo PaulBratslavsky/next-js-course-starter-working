@@ -1,13 +1,25 @@
 import Hero from "@/app/components/Hero";
-import Feature from "@/app/components/Feature";
+import Features from "@/app/components/Features";
+import { getHomePageData } from "@/app/data/loaders";
 
-import { heroData, featuresData } from "@/app/fake-data";
+export default async function HomeRoute() {
+  const data = await getHomePageData();
 
-export default function HomeRoute() {
-  return (
-    <div>
-      <Hero data={heroData} />
-      <Feature data={featuresData} />
-    </div>
+  if (!data?.blocks) return <p>No items found.</p>;
+  const { blocks } = data;
+
+  return blocks.map((block: any, index: number) =>
+    blocksRenderer(block, index)
   );
+}
+
+export function blocksRenderer(block: any, index: number) {
+  switch (block.__component) {
+    case "layout.hero":
+      return <Hero key={index} data={block} />;
+    case "layout.features-list":
+      return <Features key={index} data={block} />;
+    default:
+      return null;
+  }
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import { getStrapiMedia } from "@/app/utils";
+
 interface HeroProps {
   data: {
     heading: string;
@@ -18,11 +20,12 @@ interface HeroProps {
 
 export default function Hero({ data }: Readonly<HeroProps>) {
   const { heading, text, image, link } = data;
+  const imageUrl = getStrapiMedia(image.url);
   return (
     <div className="hero my-12 rounded-lg">
       <div className="hero-content p-0 flex-col lg:flex-row">
         <Image
-          src={image.url}
+          src={imageUrl ?? ""}
           width={500}
           height={500}
           alt={image.alternativeText}

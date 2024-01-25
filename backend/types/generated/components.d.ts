@@ -24,6 +24,27 @@ export interface ElementsSocialLink extends Schema.Component {
   };
 }
 
+export interface LayoutFeature extends Schema.Component {
+  collectionName: 'components_layout_features';
+  info: {
+    displayName: 'Feature';
+  };
+  attributes: {
+    name: Attribute.String;
+    description: Attribute.Text;
+  };
+}
+
+export interface LayoutFeaturesList extends Schema.Component {
+  collectionName: 'components_layout_features_lists';
+  info: {
+    displayName: 'Features List';
+  };
+  attributes: {
+    feature: Attribute.Component<'layout.feature', true>;
+  };
+}
+
 export interface LayoutFooter extends Schema.Component {
   collectionName: 'components_layout_footers';
   info: {
@@ -31,6 +52,19 @@ export interface LayoutFooter extends Schema.Component {
   };
   attributes: {
     socialLinks: Attribute.Component<'elements.social-link', true>;
+  };
+}
+
+export interface LayoutHero extends Schema.Component {
+  collectionName: 'components_layout_heroes';
+  info: {
+    displayName: 'Hero';
+  };
+  attributes: {
+    heading: Attribute.String;
+    text: Attribute.Text;
+    image: Attribute.Media;
+    link: Attribute.Component<'elements.link'>;
   };
 }
 
@@ -52,7 +86,10 @@ declare module '@strapi/types' {
     export interface Components {
       'elements.link': ElementsLink;
       'elements.social-link': ElementsSocialLink;
+      'layout.feature': LayoutFeature;
+      'layout.features-list': LayoutFeaturesList;
       'layout.footer': LayoutFooter;
+      'layout.hero': LayoutHero;
       'layout.top-nav': LayoutTopNav;
     }
   }

@@ -25,3 +25,24 @@ export function getGlobalData() {
   });
   return fetchData(`${baseUrl}/api/global?${query}`);
 }
+
+export function getHomePageData() {
+  const query = qs.stringify({
+    populate: {
+      blocks: {
+        populate: {
+          image: {
+            fields: ["url", "alternativeText"],
+          },
+          feature: {
+            populate: true,
+          },
+          link: {
+            populate: true,
+          },
+        },
+      },
+    },
+  });
+  return fetchData(`${baseUrl}/api/home-page?${query}`);
+}
