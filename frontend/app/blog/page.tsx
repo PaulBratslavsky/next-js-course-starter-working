@@ -4,15 +4,28 @@ import Search from "@/app/components/Search";
 
 import { getPostsData } from "@/app/data/loaders";
 
-export default async function AboutRoute() {
-  const data = await getPostsData();
-  if (!data.data) return<p>No posts found.</p>
-  
+interface SearchParams {
+  searchParams?: {
+    page?: string;
+    query?: string;
+  };
+}
+
+export default async function BlogRoute({
+  searchParams,
+}: Readonly<SearchParams>) {
+  const query = searchParams?.query ?? "";
+  const currentPage = Number(searchParams?.page) || 1;
+
+  const data = await getPostsData(query, currentPage);
+
+  if (!data.data) return <p>No posts found.</p>;
+
   return (
     <div>
       <Search />
       <BlogList data={data.data} />
-      <Pagination totalPages={5}/>
+      <Pagination totalPages={data.meta.pagination.pageCount} />
     </div>
   );
 }
