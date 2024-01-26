@@ -70,3 +70,15 @@ export function getPostsData(queryString?: string, currentPage?: number) {
   });
   return fetchData(`${baseUrl}/api/posts?${query}`);
 }
+
+export function getPostsBySlug(slug: string) {
+  const query = qs.stringify({
+    filters: { slug: slug },
+    populate: {
+      category: { populate: true },
+      image: { fields: ["url", "alternativeText"] },
+      author: { populate: { image: { fields: ["url", "alternativeText"] } } },
+    },
+  });
+  return fetchData(`${baseUrl}/api/posts?${query}`);
+}
