@@ -3,7 +3,10 @@ import { flattenAttributes } from "@/app/utils";
 const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
 const ITEMS_PER_PAGE = 3;
 
+// learn more about generic types 
+// take the generic type T and return a promise of type T
 async function fetchData(url: string) {
+  
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -71,6 +74,7 @@ export function getPostsData(queryString?: string, currentPage?: number) {
   return fetchData(`${baseUrl}/api/posts?${query}`);
 }
 
+// define expected output by slug
 export function getPostsBySlug(slug: string) {
   const query = qs.stringify({
     filters: { slug: slug },

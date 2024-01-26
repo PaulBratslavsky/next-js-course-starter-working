@@ -1,11 +1,43 @@
 "use client";
+import { useFormState } from "react-dom";
 import { AtSymbolIcon, KeyIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { registerUserAction } from "@/app/data/actions";
 import Link from "next/link";
 
+export interface StrapiRegister {
+  username: string;
+  email: string;
+  password: string;
+}
+
+const INITIAL_STATE = {
+  zodErrors: null,
+  strapiErrors: null,
+  data: null,
+  message: null,
+};
+
+function FieldError({ error }: { error: string[] }) {
+  if (!error) return null;
+  return error.map((err: string) => (
+    <div className="text-warning text-xs italic mt-1 py-2">{err}</div>
+  ));
+}
+
+function StrapiErrors({ error }: { error: string }) {
+  if (!error) return null;
+  return <div className="text-warning text-xs italic py-2">{error}</div>;
+}
+
 export default function RegisterForm() {
+  const [formState, formAction] = useFormState(
+    registerUserAction,
+    INITIAL_STATE
+  );
+
   return (
-    <form className="space-y-3" action="">
+    <form className="space-y-3" action={formAction}>
       <div className="flex-1 rounded-lg bg-base-200 px-6 pb-4 pt-8 my-6">
         <h1 className={"mb-3 text-2xl"}>Please register to continue.</h1>
         <div className="w-full">
@@ -22,11 +54,11 @@ export default function RegisterForm() {
                 id="username"
                 type="text"
                 name="username"
-                placeholder="Enter your email or username"
-                required
+                placeholder="Enter your username"
               />
               <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:" />
             </div>
+            <FieldError error={formState.zodErrors?.username} />
           </div>
           <div>
             <label
@@ -41,11 +73,11 @@ export default function RegisterForm() {
                 id="email"
                 type="email"
                 name="email"
-                placeholder="Enter your email or username"
-                required
+                placeholder="Enter your email"
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:" />
             </div>
+            <FieldError error={formState.zodErrors?.email} />
           </div>
           <div className="mt-4">
             <label
@@ -61,11 +93,10 @@ export default function RegisterForm() {
                 type="password"
                 name="password"
                 placeholder="Enter password"
-                minLength={6}
-                required
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:" />
             </div>
+            <FieldError error={formState.zodErrors?.password} />
           </div>
         </div>
 
@@ -77,6 +108,7 @@ export default function RegisterForm() {
             Have an account? Login
           </Link>
         </div>
+        <StrapiErrors error={formState.strapiErrors?.message} />
       </div>
     </form>
   );
