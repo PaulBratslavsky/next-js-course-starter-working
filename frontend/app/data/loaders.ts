@@ -1,6 +1,7 @@
 import qs from "qs";
 import { flattenAttributes } from "@/app/utils";
 const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
+const ITEMS_PER_PAGE = 3;
 
 async function fetchData(url: string) {
   try {
@@ -47,12 +48,24 @@ export function getHomePageData() {
   return fetchData(`${baseUrl}/api/home-page?${query}`);
 }
 
-export function getPostsData() {
+export function getPostsData(queryString?: string, currentPage?: number) {
   const query = qs.stringify({
     populate: {
       category: { populate: true },
       image: { fields: ["url", "alternativeText"] },
       author: { populate: { image: { fields: ["url", "alternativeText"] } } },
+    },
+    sort: ["createdAt:desc"],
+    filters: {
+      $or: [
+        { title: { $contains: queryString } },
+        { description: { $contains: queryString } },
+        { content: { $contains: queryString } },
+      ],
+    },
+    pagination: {
+      pageSize: ITEMS_PER_PAGE,
+      page: currentPage,
     },
   });
   return fetchData(`${baseUrl}/api/posts?${query}`);
