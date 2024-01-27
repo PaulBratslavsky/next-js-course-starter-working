@@ -5,12 +5,6 @@ import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { registerUserAction } from "@/app/data/actions";
 import Link from "next/link";
 
-export interface StrapiRegister {
-  username: string;
-  email: string;
-  password: string;
-}
-
 const INITIAL_STATE = {
   zodErrors: null,
   strapiErrors: null,

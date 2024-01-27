@@ -18,7 +18,6 @@ function LogoutButton() {
 }
 
 function AuthUser({ userData }: { userData: AuthUserProps }) {
-  console.log(userData, "userData");
   return (
     <div className="flex gap-2">
       <h1 className="font-semibold">{userData.username}</h1>
