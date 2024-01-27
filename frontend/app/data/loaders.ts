@@ -2,7 +2,6 @@
 import qs from "qs";
 import { flattenAttributes } from "@/app/utils";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
 const ITEMS_PER_PAGE = 3;
 
@@ -89,11 +88,10 @@ export async function getPostsBySlug(slug: string) {
   return await fetchData(`${baseUrl}/api/posts?${query}`);
 }
 
-// TODO: NEED TO REFACTOR THIS
 export async function getUserMeLoader() {
   const url = `${baseUrl}/api/users/me?`;
   const authToken = cookies().get("jwt")?.value;
-  if (!authToken) redirect("/login");
+  if (!authToken) return { ok: false, data: null };
 
   try {
     const response = await fetch(url, {
@@ -110,4 +108,5 @@ export async function getUserMeLoader() {
   } catch (error) {
     console.log(error);
   }
+  return { ok: false, data: null };
 }
