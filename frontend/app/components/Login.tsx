@@ -1,17 +1,41 @@
+"use client";
+import { useFormState } from "react-dom";
 import { AtSymbolIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { loginUserAction } from "@/app/data/actions";
 import Link from "next/link";
 
+const INITIAL_STATE = {
+  zodErrors: null,
+  strapiErrors: null,
+  data: null,
+  message: null,
+};
+
+function FieldError({ error }: { error: string[] }) {
+  if (!error) return null;
+  return error.map((err: string) => (
+    <div className="text-warning text-xs italic mt-1 py-2">{err}</div>
+  ));
+}
+
+function StrapiErrors({ error }: { error: string }) {
+  if (!error) return null;
+  return <div className="text-warning text-xs italic py-2">{error}</div>;
+}
+
 export default function LoginForm() {
+  const [formState, formAction] = useFormState(loginUserAction, INITIAL_STATE);
+
   return (
-    <form className="space-y-3" action="">
+    <form className="space-y-3" action={formAction}>
       <div className="flex-1 rounded-lg bg-base-200 px-6 pb-4 pt-8 my-6">
         <h1 className="mb-3 text-2xl">Please log in to continue.</h1>
         <div className="w-full">
           <div>
             <label
               className="mb-3 mt-5 block text-xs font-medium "
-              htmlFor="email"
+              htmlFor="identifier"
             >
               Email
             </label>
@@ -22,10 +46,10 @@ export default function LoginForm() {
                 type="text"
                 name="identifier"
                 placeholder="Enter your email or username"
-                required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:" />
             </div>
+            <FieldError error={formState.zodErrors?.identifier} />
           </div>
           <div className="mt-4">
             <label
@@ -41,11 +65,10 @@ export default function LoginForm() {
                 type="password"
                 name="password"
                 placeholder="Enter password"
-                minLength={6}
-                required
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:" />
             </div>
+            <FieldError error={formState.zodErrors?.password} />
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
@@ -56,6 +79,7 @@ export default function LoginForm() {
             Don't have an account? Sign up
           </Link>
         </div>
+        <StrapiErrors error={formState.strapiErrors?.message} />
       </div>
     </form>
   );
