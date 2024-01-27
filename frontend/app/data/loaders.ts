@@ -1,12 +1,14 @@
+"use server";
 import qs from "qs";
 import { flattenAttributes } from "@/app/utils";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
 const ITEMS_PER_PAGE = 3;
 
-// learn more about generic types 
+// learn more about generic types
 // take the generic type T and return a promise of type T
 async function fetchData(url: string) {
-  
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -18,7 +20,7 @@ async function fetchData(url: string) {
   }
 }
 
-export function getGlobalData() {
+export async function getGlobalData() {
   const query = qs.stringify({
     populate: [
       "topNav.logoText",
@@ -27,10 +29,10 @@ export function getGlobalData() {
       "footer.socialLinks",
     ],
   });
-  return fetchData(`${baseUrl}/api/global?${query}`);
+  return await fetchData(`${baseUrl}/api/global?${query}`);
 }
 
-export function getHomePageData() {
+export async function getHomePageData() {
   const query = qs.stringify({
     populate: {
       blocks: {
@@ -48,10 +50,10 @@ export function getHomePageData() {
       },
     },
   });
-  return fetchData(`${baseUrl}/api/home-page?${query}`);
+  return await fetchData(`${baseUrl}/api/home-page?${query}`);
 }
 
-export function getPostsData(queryString?: string, currentPage?: number) {
+export async function getPostsData(queryString?: string, currentPage?: number) {
   const query = qs.stringify({
     populate: {
       category: { populate: true },
@@ -71,11 +73,11 @@ export function getPostsData(queryString?: string, currentPage?: number) {
       page: currentPage,
     },
   });
-  return fetchData(`${baseUrl}/api/posts?${query}`);
+  return await fetchData(`${baseUrl}/api/posts?${query}`);
 }
 
 // define expected output by slug
-export function getPostsBySlug(slug: string) {
+export async function getPostsBySlug(slug: string) {
   const query = qs.stringify({
     filters: { slug: slug },
     populate: {
@@ -84,5 +86,28 @@ export function getPostsBySlug(slug: string) {
       author: { populate: { image: { fields: ["url", "alternativeText"] } } },
     },
   });
-  return fetchData(`${baseUrl}/api/posts?${query}`);
+  return await fetchData(`${baseUrl}/api/posts?${query}`);
+}
+
+// TODO: NEED TO REFACTOR THIS
+export async function getUserMeLoader() {
+  const url = `${baseUrl}/api/users/me?`;
+  const authToken = cookies().get("jwt")?.value;
+  if (!authToken) redirect("/login");
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+      cache: "no-cache",
+    });
+    const data = await response.json();
+    if (data.error && authToken) cookies().delete("jwt");
+    return { ok: true, data: data };
+  } catch (error) {
+    console.log(error);
+  }
 }
