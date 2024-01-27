@@ -1,4 +1,6 @@
 import { activity } from "@/app/fake-data";
+import { getUserMeLoader } from "../data/loaders";
+import Link from "next/link";
 
 interface ActivityItemProps {
   id: number;
@@ -10,7 +12,8 @@ interface ActivityItemProps {
   comment: string;
 }
 
-export default function Comments() {
+export default async function Comments() {
+  const user = await getUserMeLoader();
   return (
     <div>
       <div className="my-6">
@@ -48,9 +51,15 @@ export default function Comments() {
             placeholder="Comment"
             className="textarea textarea-bordered border-base-300 textarea-lg w-full "
           ></textarea>
-          <button type="submit" className="btn btn-primary float-right mt-2">
-            Comment
-          </button>
+          {user.ok ? (
+            <button type="submit" className="btn btn-primary float-right mt-2">
+              Comment
+            </button>
+          ) : (
+            <Link href="/login" className="btn btn-secondary float-right mt-2">
+              Login to Comment
+            </Link>
+          )}
         </form>
       </div>
     </div>
