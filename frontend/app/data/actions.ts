@@ -45,3 +45,10 @@ export async function registerUserAction(prevState: any, formData: FormData) {
     redirect("/blog");
   }
 }
+
+export async function logoutAction() {
+  cookies().delete("jwt");
+  return { ok: true };
+};
+
+

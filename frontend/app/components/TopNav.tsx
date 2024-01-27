@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LoggedIn from "@/app/components/LoggedIn";
 
 interface NavItemProps {
   text: string;
@@ -35,9 +36,11 @@ export default function TopNav({ data }: Readonly<NavItemsProps>) {
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href={cta.href} className="btn">
-          {cta.text}
-        </Link>
+        <LoggedIn>
+          <Link href={cta.href} className="btn">
+            {cta.text}
+          </Link>
+        </LoggedIn>
       </div>
     </div>
   );
