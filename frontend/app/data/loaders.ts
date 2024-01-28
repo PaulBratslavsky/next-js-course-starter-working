@@ -88,6 +88,18 @@ export async function getPostsBySlug(slug: string) {
   return await fetchData(`${baseUrl}/api/posts?${query}`);
 }
 
+export async function getCommentsByPostId(id: number) {
+  const query = qs.stringify({
+    filters: { post: id },
+    populate: {
+      user: {
+        fields: ["username", "id"],
+      },
+    },
+  });
+  return await fetchData(`${baseUrl}/api/comments?${query}`);
+}
+
 export async function getUserMeLoader() {
   const url = `${baseUrl}/api/users/me?`;
   const authToken = cookies().get("jwt")?.value;
