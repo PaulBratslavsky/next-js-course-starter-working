@@ -2,8 +2,12 @@
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { registerUserService } from "@/app/data/services";
-import { loginUserService } from "@/app/data/services";
+import {
+  registerUserService,
+  loginUserService,
+  createCommentService,
+} from "@/app/data/services";
+import { revalidatePath } from "next/cache";
 
 const schemaRegister = z.object({
   username: z.string().min(3).max(20, {
@@ -39,6 +43,7 @@ export async function registerUserAction(prevState: any, formData: FormData) {
     return {
       ...prevState,
       strapiErrors: responseData.error,
+      zodErrors: null,
       message: "Failed to Register.",
     };
   } else {
@@ -87,11 +92,78 @@ export async function loginUserAction(prevState: any, formData: FormData) {
     return {
       ...prevState,
       strapiErrors: responseData.error,
+      zodErrors: null,
       message: "Failed to Login.",
     };
   } else {
     cookies().set("jwt", responseData.jwt);
     redirect("/blog");
+  }
+}
+
+const schemaComment = z.object({
+  comment: z
+    .string()
+    .min(3, {
+      message: "Comment must be between 3 and 144 characters",
+    })
+    .max(144, {
+      message: "Comment must be between 3 and 144 characters",
+    }),
+});
+
+interface CommentParams {
+  postId: number;
+  userId: number;
+  slug: string;
+}
+
+export async function createCommentAction(
+  params: CommentParams,
+  prevState: any,
+  formData: FormData
+) {
+  const jwt = cookies().get("jwt")?.value;
+  if (!jwt) redirect("/login");
+
+  const validatedFields = schemaComment.safeParse({
+    comment: formData.get("comment"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      ...prevState,
+      zodErrors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to create comment.",
+    };
+  }
+
+  const dataToSend = {
+    data: {
+      comment: validatedFields.data.comment,
+      post: params.postId,
+      user: params.userId,
+    },
+  };
+
+  const response = await createCommentService(dataToSend, jwt);
+  const responseData = await response.json();
+  if (!response.ok && responseData.error) {
+    return {
+      ...prevState,
+      strapiErrors: responseData.error,
+      zodErrors: null,
+      message: "Failed to Register.",
+    };
+  } else {
+    revalidatePath("/blog/" + params.slug);
+    return {
+      ...prevState,
+      message: "Comment created successfully.",
+      zodErrors: null,
+      strapiErrors: null,
+      data: responseData,
+    };
   }
 }
 

@@ -12,6 +12,7 @@ interface ImageProps {
 interface SinglePostProps {
   id: number;
   title: string;
+  slug: string;
   description: string;
   image: ImageProps;
   date: string;
@@ -38,13 +39,12 @@ export default async function Post({ params }: Readonly<Params>) {
   const singlePost = data.data[0];
   if (!singlePost) return <p>No post found.</p>;
 
-  const { title, description, image, createdAt, author, content, id } =
+  const { title, description, image, createdAt, author, content, id, slug } =
     singlePost as SinglePostProps;
 
   const imageUrl = getStrapiMedia(image.url);
   const authorImageUrl = getStrapiMedia(author.image.url);
 
-  console.log(id);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
@@ -84,7 +84,7 @@ export default async function Post({ params }: Readonly<Params>) {
         </div>
       </article>
       <div className="col-span-2">
-        <Comments postId={id} />
+        <Comments postId={id} slug={slug}/>
       </div>
     </div>
   );

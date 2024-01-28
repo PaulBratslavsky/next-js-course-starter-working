@@ -90,6 +90,7 @@ export async function getPostsBySlug(slug: string) {
 
 export async function getCommentsByPostId(id: number) {
   const query = qs.stringify({
+    sort: ["createdAt:desc"],
     filters: { post: id },
     populate: {
       user: {
