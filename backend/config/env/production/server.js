@@ -1,5 +1,6 @@
 module.exports = ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
+  url: env("RENDER_EXTERNAL_URL"),
   port: env.int('PORT', 1337),
   proxy: true,
   app: {
