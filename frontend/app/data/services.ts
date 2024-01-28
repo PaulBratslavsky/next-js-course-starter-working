@@ -9,6 +9,15 @@ interface LoginUserProps {
   password: string;
 }
 
+
+interface CommentProps {
+  data: {
+    comment: string;
+    post: number;
+    user: number;
+  };
+}
+
 export async function registerUserService(userData: RegisterUserProps) {
   const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
   const url = baseUrl + "/api/auth/local/register";
@@ -49,8 +58,31 @@ export async function loginUserService(userData: LoginUserProps) {
     return response;
   } catch (error) {
     console.error("Login Service Error:", error);
-    throw new Error(
-      "Oops! Something went wrong during the login process."
-    );
+    throw new Error("Oops! Something went wrong during the login process.");
+  }
+}
+
+export async function createCommentService(
+  commentData: CommentProps,
+  jwt: string
+) {
+  const baseUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
+  const url = baseUrl + "/api/comments";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + jwt,
+      },
+      body: JSON.stringify(commentData),
+      cache: "no-cache",
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Login Service Error:", error);
+    throw new Error("Oops! Something went wrong during the login process.");
   }
 }

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { formatDate } from "@/app/utils";
-import { getUserMeLoader, getCommentsByPostId } from "../data/loaders";
+import { getUserMeLoader, getCommentsByPostId } from "@/app/data/loaders";
+import CreateCommentForm from "./CreateCommentForm";
 
 interface CommentItemProps {
   id: number;
@@ -13,12 +13,14 @@ interface CommentItemProps {
 
 interface CommentProps {
   postId: number;
+  slug: string;
 }
 
-export default async function Comments({ postId }: Readonly<CommentProps>) {
+export default async function Comments({ postId, slug }: Readonly<CommentProps>) {
   const user = await getUserMeLoader();
   const data = await getCommentsByPostId(postId);
-
+  const userId = user.ok ? user.data.id : null;
+  
   if (!data.data) return <p className="p-8  text-center">No comments found.</p>;
   const comments = data.data;
   return (
@@ -53,21 +55,7 @@ export default async function Comments({ postId }: Readonly<CommentProps>) {
         </div>
       </div>
       <div className="mt-6">
-        <form action="#" className="w-full">
-          <textarea
-            placeholder="Comment"
-            className="textarea textarea-bordered border-base-300 textarea-lg w-full "
-          ></textarea>
-          {user.ok ? (
-            <button type="submit" className="btn btn-primary float-right mt-2">
-              Comment
-            </button>
-          ) : (
-            <Link href="/login" className="btn btn-secondary float-right mt-2">
-              Login to Comment
-            </Link>
-          )}
-        </form>
+        <CreateCommentForm postId={postId} userId={userId} slug={slug} />
       </div>
     </div>
   );
