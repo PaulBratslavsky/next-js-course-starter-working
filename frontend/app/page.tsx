@@ -13,7 +13,7 @@ export default async function HomeRoute() {
   );
 }
 
-export function blocksRenderer(block: any, index: number) {
+function blocksRenderer(block: any, index: number) {
   switch (block.__component) {
     case "layout.hero":
       return <Hero key={index} data={block} />;
