@@ -62,9 +62,9 @@ export async function getPostsData(queryString?: string, currentPage?: number) {
     sort: ["createdAt:desc"],
     filters: {
       $or: [
-        { title: { $contains: queryString } },
-        { description: { $contains: queryString } },
-        { content: { $contains: queryString } },
+        { title: { $containsi: queryString } },
+        { description: { $containsi: queryString } },
+        { content: { $containsi: queryString } },
       ],
     },
     pagination: {
